@@ -11,9 +11,9 @@
 Hello, my project is called MacroFood, this is a calorie tracking app that will allow users to seamlessly track calories and 
 will also provide them with caloric guidance relating to their goals. This project is for users who want to be successful in 
 their fitness goals: maintain/lose/gain weight etc. Core features will be personalized calorie recommendations, the ability
-to search any food and input portion sizes. The app will automatically edit the macronutrients to the entered portions. Users
-will also be allowed to enter their own personal foods and creations for custom dishes. This project will be made with python for
-the backend and the interface and SQL for the food database. 
+to search their food with the integration of USDA FoodData Central and input portion sizes. The app will automatically edit the 
+macronutrients to the entered portions. Users will also be allowed to enter their own personal foods and creations for custom dishes. 
+This project will be made with python for the backend and the interface and SQL for the food database. 
 
 [One paragraph: What is the system? Who is it for? What are its 3–4 core features?
 This paragraph is your approval request — see the Project Brief, Section 2.]
