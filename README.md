@@ -32,10 +32,10 @@ instructor will follow it literally on conference days.]
 
 | Tier | Responsibilities in THIS system |
 |------|--------------------------------|
-| Presentation | [what your UI layer does] |
-| Service | [what your use-case/orchestration layer does] |
-| Domain | [your entities and business rules] |
-| Data | [how and where data is stored] |
+| Presentation | [what your UI layer does] totalView shows overview of all food item and. foodView shows individual food item: calories and macronutrients. AddNewFood collects new food items from user and allows them to manually enter custom calories and macronutrients.  addWeight, allows user to add their current weight and input their goal weight.  |
+| Service | [what your use-case/orchestration layer does] addFood, editCalories, editWeight, editFood |
+| Domain | [your entities and business rules]  Food (must have at least one serving), userFood(must have at least , dailyCalories, recommendedCalories, userWeight (must have a weight of at least 1) |
+| Data | [how and where data is stored] foods, calories, macronutrients, and weights data will be stored in an SQL database |
 
 ### C4 — Context & Container (Session 3 studio)
 
