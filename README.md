@@ -49,10 +49,10 @@ flowchart TB
 ```mermaid
 %% Container view: your containers should match the tier table above.
 flowchart TB
-    subgraph YourSystem [Your System]
-        ui[Web UI / CLI<br/>Presentation] --> api[Application / Service]
-        api --> domain[Domain Model]
-        domain --> db[(Database<br/>Data tier)]
+    subgraph YourSystem [Calorie and Macronutrient Tracker]
+        ui[Dashboard, FoodLog] --> api[Profile Manager, Calorie Calculator, etc...]
+        api --> domain[AddFood, editCalories, etc...]
+        domain --> db[(SQL)Food Database]
     end
 ```
 
