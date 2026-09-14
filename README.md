@@ -42,8 +42,8 @@ instructor will follow it literally on conference days.]
 ```mermaid
 %% Replace this placeholder with YOUR system's context diagram.
 flowchart TB
-    user([User]) -->|uses| system[Your System]
-    system -->|stores data in| db[(Database)]
+    user([Jerry]) -->|uses| system[Calorie and Macronutrient Tracker]
+    system -->|stores data in| db[(USDA FoodData Central database)]
 ```
 
 ```mermaid
