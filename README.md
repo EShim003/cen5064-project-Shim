@@ -52,7 +52,7 @@ flowchart TB
     subgraph YourSystem [Calorie and Macronutrient Tracker]
         ui[Dashboard, FoodLog] --> api[Profile Manager, Calorie Calculator, etc...]
         api --> domain[AddFood, editCalories, etc...]
-        domain --> db[(SQL)Food Database]
+        domain --> db[Food Database]
     end
 ```
 
