@@ -42,7 +42,7 @@ instructor will follow it literally on conference days.]
 ```mermaid
 %% Replace this placeholder with YOUR system's context diagram.
 flowchart TB
-    user([Weightlifter]) -->|uses| system[Calorie and Macronutrient Tracker]
+    user([Weightlifter]) -->|uses| system[Calorie and Macronutrient Calculator]
     system -->|stores data in| db[(USDA FoodData Central database)]
 ```
 
