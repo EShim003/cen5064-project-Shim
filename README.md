@@ -74,6 +74,25 @@ classDiagram
         +getCarbohydrates(): Double  
         +getFat(): Double
 }
+
+classDiagram
+    class User {
+        -Long id
+        -String name
+        -String email
+        -Double weight
+        -Double height
+        -Integer age
+        -Double calorieGoal
+        -Double proteinGoal
+        -Double carbGoal
+        -Double fatGoal
+
+        +getProfile() User
+        +updateWeight(Double weight) void
+        +updateCalorieGoal(Double calories) void
+        +updateMacroGoals(Double protein, Double carbs, Double fat) void
+    }
 ```
 
 ```mermaid
