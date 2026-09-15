@@ -75,7 +75,6 @@ classDiagram
         +getFat(): Double
 }
 
-classDiagram
     class User {
         -Long id
         -String name
