@@ -92,6 +92,21 @@ classDiagram
         +updateCalorieGoal(Double calories) void
         +updateMacroGoals(Double protein, Double carbs, Double fat) void
     }
+
+    class Meal {
+        -Long id
+        -String mealType
+        -String date
+        -Double totalCalories
+        -Double totalProtein
+        -Double totalCarbohydrates
+        -Double totalFat
+
+        +addFood(Food food) void
+        +removeFood(Food food) void
+        +calculateCalories() Double
+        +calculateMacros() void
+    }
 ```
 
 ```mermaid
