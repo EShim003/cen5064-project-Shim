@@ -61,11 +61,18 @@ flowchart TB
 ```mermaid
 %% Class diagram: your 3–4 core domain classes.
 classDiagram
-    class ExampleEntity {
+    class Food {
         -id: Long
         -name: String
-        +doSomething()
-    }
+        -servingSize: Double         
+        -calories: Double            
+        -protein: Double             
+        -carbohydrates: Double       
+        -fat: Double     
+        +getCalories(): Double       
+        +getProtein(): Double        
+        +getCarbohydrates(): Double  
+        +getFat(): Double  
 ```
 
 ```mermaid
