@@ -72,7 +72,8 @@ classDiagram
         +getCalories(): Double       
         +getProtein(): Double        
         +getCarbohydrates(): Double  
-        +getFat(): Double  
+        +getFat(): Double
+}
 ```
 
 ```mermaid
