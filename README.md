@@ -43,16 +43,16 @@ instructor will follow it literally on conference days.]
 %% Replace this placeholder with YOUR system's context diagram.
 flowchart TB
     user([Weightlifter]) -->|uses| system[Calorie and Macronutrient Calculator]
-    system -->|stores data in| db[(USDA FoodData Central database)]
+    system -->|stores data in| db[(USDA FoodData Central External API/System)]
 ```
 
 ```mermaid
 %% Container view: your containers should match the tier table above.
 flowchart TB
     subgraph YourSystem [Calorie and Macronutrient Tracker]
-        ui[Dashboard, FoodLog] --> api[Profile Manager, Calorie Calculator, etc...]
-        api --> domain[AddFood, editCalories, etc...]
-        domain --> db[Food Database]
+        ui[Dashboard, FoodLog, Profiles] --> api[Profile Manager, Food Manager, Calorie Calculator, etc...]
+        api --> domain[Nutrition Information, Calorie Goal]
+        domain --> db[users, meals, goals, food logs]
     end
 ```
 
