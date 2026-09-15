@@ -107,6 +107,20 @@ classDiagram
         +calculateCalories() Double
         +calculateMacros() void
     }
+
+    class FoodLog {
+        -Long id
+        -String date
+        -Double totalCalories
+        -Double totalProtein
+        -Double totalCarbohydrates
+        -Double totalFat
+
+        +addMeal(Meal meal) void
+        +removeMeal(Meal meal) void
+        +calculateTotalCalories() Double
+        +calculateTotalMacros() void
+    }
 ```
 
 ```mermaid
