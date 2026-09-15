@@ -126,16 +126,30 @@ classDiagram
 ```mermaid
 %% Sequence diagram: ONE core use case, end to end.
 sequenceDiagram
-    actor U as User
-    participant UI
-    participant S as Service
-    participant D as Data
-    U->>UI: action
-    UI->>S: request
-    S->>D: save/load
-    D-->>S: result
-    S-->>UI: response
-    UI-->>U: confirmation
+    actor Weightlifter
+    participant UI as Web UI
+    participant Service as Meal Service
+    participant Data as Database
+
+    Weightlifter->>UI: Select "Add Meal"
+    UI-->>Weightlifter: Display meal entry form
+
+    Weightlifter->>UI: Enter chicken, broccoli, and rice
+    Weightlifter->>UI: Enter serving sizes
+
+    UI->>Service: Submit meal information
+
+    Service->>Service: Calculate calories and macros
+
+    Service->>Data: Save meal and food entries
+    Data-->>Service: Meal saved successfully
+
+    Service->>Data: Update daily FoodLog
+    Data-->>Service: FoodLog updated
+
+    Service-->>UI: Return updated calorie and macro totals
+
+    UI-->>Weightlifter: Display meal and updated daily totals
 ```
 
 ## Architecture Decision Records
