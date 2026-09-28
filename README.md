@@ -159,6 +159,7 @@ Decisions live in [`docs/adr/`](docs/adr/). Start with ADR-001 in Session 4.
 | # | Decision | Status |
 |---|----------|--------|
 | [001](docs/adr/adr-001.md) | [What I am building and why] | [proposed] |
+Working on adding log in page to the nutrition tracker
 
 ## Weekly log (optional but recommended)
 
