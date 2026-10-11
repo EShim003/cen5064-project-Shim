@@ -161,6 +161,7 @@ Decisions live in [`docs/adr/`](docs/adr/). Start with ADR-001 in Session 4.
 | [001](docs/adr/adr-001.md) | [What I am building and why] | [proposed] |
 Working on adding log in page to the nutrition tracker
 Finished ability to add food and macronutrients and store in database
+Added ability to search for food and enter weight to see calories and macronutrients
 
 ## Weekly log (optional but recommended)
 
