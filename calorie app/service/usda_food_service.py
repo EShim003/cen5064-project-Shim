@@ -1,6 +1,9 @@
 
 import os
 import requests
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 class USDAFoodService:
@@ -14,12 +17,15 @@ class USDAFoodService:
             raise ValueError("USDA_API_KEY is not configured")
 
     def search_food(self, food_name):
+        """Search USDA for foods matching a name."""
+
         url = f"{self.BASE_URL}/foods/search"
 
         params = {
             "api_key": self.api_key,
             "query": food_name,
-            "pageSize": 10
+            "pageSize": 10,
+            "dataType": ["Foundation", "SR Legacy"]
         }
 
         response = requests.get(
@@ -27,20 +33,14 @@ class USDAFoodService:
             params=params,
             timeout=15
         )
-
         response.raise_for_status()
 
         data = response.json()
-
         return data.get("foods", [])
 
-    
-    
-    #the get_food_details method retrieves detailed information about a specific food item using its FDC ID. 
-    #It constructs the URL for the USDA API endpoint, makes a GET request with the necessary parameters, 
-    #and returns the JSON response containing the food details.
-    
     def get_food_details(self, fdc_id):
+        """Retrieve complete nutrition data for a food."""
+
         url = f"{self.BASE_URL}/food/{fdc_id}"
 
         response = requests.get(
@@ -48,14 +48,13 @@ class USDAFoodService:
             params={"api_key": self.api_key},
             timeout=15
         )
-
         response.raise_for_status()
 
         return response.json()
 
-
-
     def get_macros(self, fdc_id):
+        """Get nutrition values per 100 grams."""
+
         food = self.get_food_details(fdc_id)
 
         nutrients = food.get("foodNutrients", [])
@@ -83,4 +82,13 @@ class USDAFoodService:
                 key = nutrient_ids[nutrient_id]
                 macros[key] = item.get("amount")
 
+        # Some foods use newer energy nutrient IDs
+        if macros["calories"] is None:
+            for item in nutrients:
+                nutrient = item.get("nutrient", {})
+                if nutrient.get("id") in (2047, 2048):
+                    macros["calories"] = item.get("amount")
+                    break
+
         return macros
+
