@@ -1,4 +1,4 @@
-# [Your Project Name]
+# [Calorie & Macronutrient Tracker]
 
 <!-- CI badge: after Session 4, replace ORG/REPO and the workflow filename, then uncomment:
 ![CI](https://github.com/ORG/REPO/actions/workflows/ci.yml/badge.svg)
