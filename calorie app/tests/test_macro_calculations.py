@@ -1,7 +1,8 @@
 
 import unittest
 
-from main import calculate_macros, format_nutrient
+from service.food_service import calculate_macros
+from presentation.food_menu import format_nutrient
 
 
 class TestMacroCalculations(unittest.TestCase):
