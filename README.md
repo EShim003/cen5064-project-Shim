@@ -351,8 +351,8 @@ Decisions live in [`docs/adr/`](docs/adr/). Start with ADR-001 in Session 4.
 
 | # | Decision | Status |
 |---|----------|--------|
-| [001](docs/adr/adr-001.md) | [What I am building and why] | [proposed] |
-| [001](docs/adr/adr-0002-calculate-macros.md) | Add ADR for calculating macronutrients by weight | [completed] |
+| [001](docs/adr/0001-Add-Food-Controller.md) | We will implement an AddFoodController that communicates with the FoodService to validate and process manually entered food information. | COMPLETED |
+| [002](docs/adr/adr-0002-calculate-macros.md) | calculates macronutrients by weight | COMPLETED |
 
 Working on adding log in page to the nutrition tracker
 Finished ability to add food and macronutrients and store in database
