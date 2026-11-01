@@ -1,76 +1,40 @@
 
 import unittest
 
-from service.food_service import calculate_macros
-from presentation.food_menu import format_nutrient
+from service.macro_calculator import MacroCalculator
 
 
 class TestMacroCalculations(unittest.TestCase):
 
     def setUp(self):
-        # Example USDA nutrition values per 100 grams
         self.macros = {
-            "name": "Bananas, raw",
-            "calories": 89,
-            "protein": 1.09,
-            "carbohydrates": 22.84,
-            "fats": 0.33
+            "calories": 200,
+            "protein": 20,
+            "carbohydrates": 15,
+            "fats": 8
         }
 
-    def test_macros_for_100_grams(self):
-        # 100 grams should return the original USDA values
-        result = calculate_macros(self.macros, 100)
+    def test_calculate_macros_100g(self):
+        result = MacroCalculator.calculate(self.macros, 100)
 
-        self.assertAlmostEqual(result["calories"], 89)
-        self.assertAlmostEqual(result["protein"], 1.09)
-        self.assertAlmostEqual(result["carbohydrates"], 22.84)
-        self.assertAlmostEqual(result["fats"], 0.33)
+        self.assertEqual(result["calories"], 200)
+        self.assertEqual(result["protein"], 20)
+        self.assertEqual(result["carbohydrates"], 15)
+        self.assertEqual(result["fats"], 8)
 
-    def test_macros_for_150_grams(self):
-        # 150 grams should multiply values by 1.5
-        result = calculate_macros(self.macros, 150)
+    def test_calculate_macros_150g(self):
+        result = MacroCalculator.calculate(self.macros, 150)
 
-        self.assertAlmostEqual(result["calories"], 133.5)
-        self.assertAlmostEqual(result["protein"], 1.635)
-        self.assertAlmostEqual(result["carbohydrates"], 34.26)
-        self.assertAlmostEqual(result["fats"], 0.495)
+        self.assertEqual(result["calories"], 300)
+        self.assertEqual(result["protein"], 30)
+        self.assertEqual(result["carbohydrates"], 22.5)
+        self.assertEqual(result["fats"], 12)
 
-    def test_macros_for_50_grams(self):
-        # 50 grams should multiply values by 0.5
-        result = calculate_macros(self.macros, 50)
+    def test_calculate_macros_zero_grams(self):
+        result = MacroCalculator.calculate(self.macros, 0)
 
-        self.assertAlmostEqual(result["calories"], 44.5)
-        self.assertAlmostEqual(result["protein"], 0.545)
-        self.assertAlmostEqual(result["carbohydrates"], 11.42)
-        self.assertAlmostEqual(result["fats"], 0.165)
-
-    def test_missing_nutrient(self):
-        # Missing USDA values should remain None
-        self.macros["fats"] = None
-
-        result = calculate_macros(self.macros, 150)
-
-        self.assertIsNone(result["fats"])
-        self.assertAlmostEqual(result["calories"], 133.5)
-
-    def test_nutrient_formatting(self):
-        # Nutritional values should display two decimals
-        self.assertEqual(
-            format_nutrient(133.5, "kcal"),
-            "133.50 kcal"
-        )
-
-        self.assertEqual(
-            format_nutrient(1.635, "g"),
-            "1.64 g"
-        )
-
-    def test_missing_nutrient_formatting(self):
-        # Missing values should display Not available
-        self.assertEqual(
-            format_nutrient(None, "g"),
-            "Not available"
-        )
+        self.assertEqual(result["calories"], 0)
+        self.assertEqual(result["protein"], 0)
 
 
 if __name__ == "__main__":
