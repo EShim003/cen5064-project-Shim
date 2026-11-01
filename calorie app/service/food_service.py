@@ -1,4 +1,7 @@
 
+from service.food_validator import FoodValidator
+
+
 class FoodService:
 
     def __init__(self, food_repository):
@@ -8,13 +11,9 @@ class FoodService:
                  fats, carbohydrates, source="manual",
                  usda_fdc_id=None, created_by=None):
 
-        if not name or not name.strip():
-            raise ValueError("Food name cannot be empty")
-
-        values = [calories, protein, fats, carbohydrates]
-
-        if any(value < 0 for value in values):
-            raise ValueError("Nutrition values cannot be negative")
+        FoodValidator.validate(
+            name, calories, protein, fats, carbohydrates
+        )
 
         return self.food_repository.save(
             name=name,
@@ -29,29 +28,3 @@ class FoodService:
 
     def get_food(self, food_id):
         return self.food_repository.get_by_id(food_id)
-
-
-
-def calculate_macros(macros, grams):
-    """Calculate nutrients for a specified weight in grams."""
-
-    multiplier = grams / 100
-
-    return {
-        "calories": (
-            macros["calories"] * multiplier
-            if macros["calories"] is not None else None
-        ),
-        "protein": (
-            macros["protein"] * multiplier
-            if macros["protein"] is not None else None
-        ),
-        "carbohydrates": (
-            macros["carbohydrates"] * multiplier
-            if macros["carbohydrates"] is not None else None
-        ),
-        "fats": (
-            macros["fats"] * multiplier
-            if macros["fats"] is not None else None
-        )
-    }
