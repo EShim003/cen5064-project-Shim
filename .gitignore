@@ -26,3 +26,12 @@ Thumbs.db
 # --- Local secrets/config (never commit credentials) ---
 .env
 *.local
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+
+# Python virtual environments
+.venv/
+venv/
