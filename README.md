@@ -355,12 +355,17 @@ Decisions live in [`docs/adr/`](docs/adr/). Start with ADR-001 in Session 4.
 | [002](docs/adr/0002-calculate-macros.md) | calculates macronutrients by weight | COMPLETED |
 | [003](docs/adr/0003-Add-Foods_To_Log.md) | Users can now add seached foods to their food logs | COMPLETED |
 | [004](docs/adr/0004-Add-Custom-Food.md) | Users can now add their own custom food to their food logs | COMPLETED |
+| [004](docs/adr/0005-Add-Login-Gui.md) | Added Login and account creation page in the GUI | COMPLETED |
+
 
 
 Working on adding log in page to the nutrition tracker
 Finished ability to add food and macronutrients and store in database
 Added ability to search for food and enter weight to see calories and macronutrients
 Created presentation folder and created food_menu.py inside of it 
+Allowed users to search for food and add it to their food log
+Users can now import their own foods and macronutrients
+Users can now login and create accounts 
 
 ## Weekly log (optional but recommended)
 
