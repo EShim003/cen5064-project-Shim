@@ -77,16 +77,16 @@ class TestCalorieTrackerGUI(unittest.TestCase):
 
         self.assertEqual(self.gui.foods, [])
 
-    @patch("presentation.gui.messagebox.showwarning")
-    def test_calculate_without_selection(self, mock_warning):
+    @patch("presentation.gui.messagebox.showerror")
+    def test_calculate_without_selection(self, mock_error):
         # Calculation requires a selected food
         self.gui.food_listbox.curselection.return_value = ()
 
         self.gui.calculate_nutrition()
 
-        mock_warning.assert_called_once_with(
-            "No Selection",
-            "Please select a food."
+        mock_error.assert_called_once_with(
+            "Invalid Input",
+            "Please select a food first."
         )
 
         self.gui.usda_service.get_macros.assert_not_called()
@@ -172,7 +172,10 @@ class TestCalorieTrackerGUI(unittest.TestCase):
             "text"
         ]
 
-        self.assertIn("Protein: Not available", output)
+        self.assertIn(
+            "Protein: Not available",
+            output
+        )
 
         mock_error.assert_not_called()
 
