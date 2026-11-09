@@ -352,9 +352,9 @@ Decisions live in [`docs/adr/`](docs/adr/). Start with ADR-001 in Session 4.
 | # | Decision | Status |
 |---|----------|--------|
 | [001](docs/adr/0001-Add-Food-Controller.md) | We will implement an AddFoodController that communicates with the FoodService to validate and process manually entered food information. | COMPLETED |
-| [002](docs/adr/adr-0002-calculate-macros.md) | calculates macronutrients by weight | COMPLETED |
-| [003](docs/adr/adr-0003-Add-Foods_To_Log.md) | Users can now add seached foods to their food logs | COMPLETED |
-| [004](docs/adr/adr-0004-Add-Custom-Food.md) | Users can now add their own custom food to their food logs | COMPLETED |
+| [002](docs/adr/0002-calculate-macros.md) | calculates macronutrients by weight | COMPLETED |
+| [003](docs/adr/0003-Add-Foods_To_Log.md) | Users can now add seached foods to their food logs | COMPLETED |
+| [004](docs/adr/0004-Add-Custom-Food.md) | Users can now add their own custom food to their food logs | COMPLETED |
 
 
 Working on adding log in page to the nutrition tracker
