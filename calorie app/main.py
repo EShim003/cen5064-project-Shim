@@ -1,31 +1,38 @@
 
+import tkinter as tk
+
+from presentation.gui import CalorieTrackerGUI
+from presentation.login_gui import LoginGUI
+
+from controller.auth_controller import AuthController
+from service.auth_service import AuthService
+from repository.user_repository import UserRepository
 from service.usda_food_service import USDAFoodService
-from presentation.food_menu import FoodMenu
 
 
 def main():
+    root = tk.Tk()
+
+    # Initialize authentication
+    user_repository = UserRepository("calorie_tracker.db")
+    auth_service = AuthService(user_repository)
+    auth_controller = AuthController(auth_service)
+
+    # Initialize USDA service
     usda_service = USDAFoodService()
-    food_menu = FoodMenu(usda_service)
 
-    print("================================")
-    print("       CALORIE TRACKER")
-    print("================================")
+    def open_food_search(user):
+        # Clear login screen
+        for widget in root.winfo_children():
+            widget.destroy()
 
-    while True:
-        print("\n1. Search USDA Foods")
-        print("2. Exit")
+        # Launch food search GUI
+        CalorieTrackerGUI(root, usda_service)
 
-        choice = input("\nSelect an option: ").strip()
+    # Display login screen first
+    LoginGUI(root, auth_controller, open_food_search)
 
-        if choice == "1":
-            food_menu.search_food()
-
-        elif choice == "2":
-            print("Goodbye!")
-            break
-
-        else:
-            print("Invalid option. Please try again.")
+    root.mainloop()
 
 
 if __name__ == "__main__":
