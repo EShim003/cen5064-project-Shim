@@ -8,13 +8,17 @@ from presentation.gui import CalorieTrackerGUI
 class TestCalorieTrackerGUI(unittest.TestCase):
 
     def setUp(self):
-        # Create GUI instance without opening a window
+        # Create GUI instance without opening a Tkinter window
         self.gui = CalorieTrackerGUI.__new__(
             CalorieTrackerGUI
         )
 
         # Mock dependencies
         self.gui.usda_service = Mock()
+        self.gui.food_log_service = Mock()
+        self.gui.custom_food_service = Mock()
+
+        # Initialize food data
         self.gui.foods = []
         self.gui.log_entries = []
 
@@ -23,17 +27,28 @@ class TestCalorieTrackerGUI(unittest.TestCase):
         self.gui.food_listbox = Mock()
         self.gui.grams_entry = Mock()
         self.gui.result_label = Mock()
+        self.gui.log_tree = Mock()
+        self.gui.totals_label = Mock()
+        self.gui.macro_chart = Mock()
 
-        # Mock session information
+        # Mock logged-in user
         self.gui.user = {
             "id": 1,
             "username": "testuser"
         }
 
+        # Initialize custom food windows
+        self.gui.custom_food_windows = []
+
+        # Mock logout callback
         self.gui.on_logout = Mock()
+
+        # Mock mousewheel cleanup
+        self.gui.disable_mousewheel = Mock()
 
     @patch("presentation.gui.messagebox.showwarning")
     def test_search_empty_food(self, mock_warning):
+        # Empty searches should display a warning
         self.gui.search_entry.get.return_value = " "
 
         self.gui.search_food()
@@ -46,6 +61,7 @@ class TestCalorieTrackerGUI(unittest.TestCase):
         self.gui.usda_service.search_food.assert_not_called()
 
     def test_search_food_successfully(self):
+        # USDA search should populate the listbox
         self.gui.search_entry.get.return_value = "Banana"
 
         self.gui.usda_service.search_food.return_value = [
@@ -70,6 +86,7 @@ class TestCalorieTrackerGUI(unittest.TestCase):
 
     @patch("presentation.gui.messagebox.showinfo")
     def test_search_no_results(self, mock_info):
+        # No matching foods should display a message
         self.gui.search_entry.get.return_value = "Unknown"
 
         self.gui.usda_service.search_food.return_value = []
@@ -85,6 +102,7 @@ class TestCalorieTrackerGUI(unittest.TestCase):
 
     @patch("presentation.gui.messagebox.showerror")
     def test_calculate_without_selection(self, mock_error):
+        # Calculation requires a selected food
         self.gui.food_listbox.curselection.return_value = ()
 
         self.gui.calculate_nutrition()
@@ -98,6 +116,7 @@ class TestCalorieTrackerGUI(unittest.TestCase):
 
     @patch("presentation.gui.messagebox.showerror")
     def test_calculate_invalid_weight(self, mock_error):
+        # Negative weights should be rejected
         self.gui.foods = [
             {
                 "fdcId": 123,
@@ -118,10 +137,8 @@ class TestCalorieTrackerGUI(unittest.TestCase):
         self.gui.usda_service.get_macros.assert_not_called()
 
     @patch("presentation.gui.messagebox.showerror")
-    def test_calculate_nutrition_successfully(
-        self,
-        mock_error
-    ):
+    def test_calculate_nutrition_successfully(self, mock_error):
+        # Calculate nutrition for 150 grams of banana
         self.gui.foods = [
             {
                 "fdcId": 123,
@@ -146,6 +163,7 @@ class TestCalorieTrackerGUI(unittest.TestCase):
             123
         )
 
+        # Verify displayed nutritional values
         output = (
             self.gui.result_label.config.call_args.kwargs[
                 "text"
@@ -162,10 +180,8 @@ class TestCalorieTrackerGUI(unittest.TestCase):
         mock_error.assert_not_called()
 
     @patch("presentation.gui.messagebox.showerror")
-    def test_calculate_missing_nutrient(
-        self,
-        mock_error
-    ):
+    def test_calculate_missing_nutrient(self, mock_error):
+        # Missing USDA nutrients should display Not available
         self.gui.foods = [
             {
                 "fdcId": 123,
@@ -206,6 +222,7 @@ class TestCalorieTrackerGUI(unittest.TestCase):
             "username": "testuser"
         }
 
+        # Add temporary food search data
         self.gui.foods = [
             {
                 "fdcId": 123,
@@ -213,6 +230,7 @@ class TestCalorieTrackerGUI(unittest.TestCase):
             }
         ]
 
+        # Add temporary food log data
         self.gui.log_entries = [
             {
                 "id": 1,
@@ -223,17 +241,22 @@ class TestCalorieTrackerGUI(unittest.TestCase):
         # Log out the user
         self.gui.logout()
 
-        # Verify user information is cleared
+        # Verify the current user is cleared
         self.assertIsNone(self.gui.user)
 
-        # Verify temporary food data is cleared
+        # Verify temporary data is cleared
         self.assertEqual(self.gui.foods, [])
         self.assertEqual(self.gui.log_entries, [])
 
-        # Verify return to login callback
+        # Verify custom food windows are cleared
+        self.assertEqual(self.gui.custom_food_windows, [])
+
+        # Verify mousewheel bindings are removed
+        self.gui.disable_mousewheel.assert_called_once()
+
+        # Verify login callback is triggered
         self.gui.on_logout.assert_called_once()
 
 
 if __name__ == "__main__":
     unittest.main()
-
