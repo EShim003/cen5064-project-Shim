@@ -16,6 +16,7 @@ class TestCalorieTrackerGUI(unittest.TestCase):
         # Mock dependencies
         self.gui.usda_service = Mock()
         self.gui.foods = []
+        self.gui.log_entries = []
 
         # Mock GUI widgets
         self.gui.search_entry = Mock()
@@ -23,9 +24,16 @@ class TestCalorieTrackerGUI(unittest.TestCase):
         self.gui.grams_entry = Mock()
         self.gui.result_label = Mock()
 
+        # Mock session information
+        self.gui.user = {
+            "id": 1,
+            "username": "testuser"
+        }
+
+        self.gui.on_logout = Mock()
+
     @patch("presentation.gui.messagebox.showwarning")
     def test_search_empty_food(self, mock_warning):
-        # Empty search should display a warning
         self.gui.search_entry.get.return_value = " "
 
         self.gui.search_food()
@@ -38,7 +46,6 @@ class TestCalorieTrackerGUI(unittest.TestCase):
         self.gui.usda_service.search_food.assert_not_called()
 
     def test_search_food_successfully(self):
-        # USDA search should populate the listbox
         self.gui.search_entry.get.return_value = "Banana"
 
         self.gui.usda_service.search_food.return_value = [
@@ -63,7 +70,6 @@ class TestCalorieTrackerGUI(unittest.TestCase):
 
     @patch("presentation.gui.messagebox.showinfo")
     def test_search_no_results(self, mock_info):
-        # No matching foods should display a message
         self.gui.search_entry.get.return_value = "Unknown"
 
         self.gui.usda_service.search_food.return_value = []
@@ -79,7 +85,6 @@ class TestCalorieTrackerGUI(unittest.TestCase):
 
     @patch("presentation.gui.messagebox.showerror")
     def test_calculate_without_selection(self, mock_error):
-        # Calculation requires a selected food
         self.gui.food_listbox.curselection.return_value = ()
 
         self.gui.calculate_nutrition()
@@ -93,9 +98,11 @@ class TestCalorieTrackerGUI(unittest.TestCase):
 
     @patch("presentation.gui.messagebox.showerror")
     def test_calculate_invalid_weight(self, mock_error):
-        # Negative weights should be rejected
         self.gui.foods = [
-            {"fdcId": 123, "description": "Bananas, raw"}
+            {
+                "fdcId": 123,
+                "description": "Bananas, raw"
+            }
         ]
 
         self.gui.food_listbox.curselection.return_value = (0,)
@@ -111,10 +118,15 @@ class TestCalorieTrackerGUI(unittest.TestCase):
         self.gui.usda_service.get_macros.assert_not_called()
 
     @patch("presentation.gui.messagebox.showerror")
-    def test_calculate_nutrition_successfully(self, mock_error):
-        # Calculate nutrition for 150g of banana
+    def test_calculate_nutrition_successfully(
+        self,
+        mock_error
+    ):
         self.gui.foods = [
-            {"fdcId": 123, "description": "Bananas, raw"}
+            {
+                "fdcId": 123,
+                "description": "Bananas, raw"
+            }
         ]
 
         self.gui.food_listbox.curselection.return_value = (0,)
@@ -134,10 +146,11 @@ class TestCalorieTrackerGUI(unittest.TestCase):
             123
         )
 
-        # Check displayed nutritional values
-        output = self.gui.result_label.config.call_args.kwargs[
-            "text"
-        ]
+        output = (
+            self.gui.result_label.config.call_args.kwargs[
+                "text"
+            ]
+        )
 
         self.assertIn("Bananas, raw", output)
         self.assertIn("150 g", output)
@@ -149,10 +162,15 @@ class TestCalorieTrackerGUI(unittest.TestCase):
         mock_error.assert_not_called()
 
     @patch("presentation.gui.messagebox.showerror")
-    def test_calculate_missing_nutrient(self, mock_error):
-        # Missing USDA nutrients should display Not available
+    def test_calculate_missing_nutrient(
+        self,
+        mock_error
+    ):
         self.gui.foods = [
-            {"fdcId": 123, "description": "Test Food"}
+            {
+                "fdcId": 123,
+                "description": "Test Food"
+            }
         ]
 
         self.gui.food_listbox.curselection.return_value = (0,)
@@ -168,9 +186,11 @@ class TestCalorieTrackerGUI(unittest.TestCase):
 
         self.gui.calculate_nutrition()
 
-        output = self.gui.result_label.config.call_args.kwargs[
-            "text"
-        ]
+        output = (
+            self.gui.result_label.config.call_args.kwargs[
+                "text"
+            ]
+        )
 
         self.assertIn(
             "Protein: Not available",
@@ -179,6 +199,41 @@ class TestCalorieTrackerGUI(unittest.TestCase):
 
         mock_error.assert_not_called()
 
+    def test_logout(self):
+        # Set up a logged-in user
+        self.gui.user = {
+            "id": 1,
+            "username": "testuser"
+        }
+
+        self.gui.foods = [
+            {
+                "fdcId": 123,
+                "description": "Bananas, raw"
+            }
+        ]
+
+        self.gui.log_entries = [
+            {
+                "id": 1,
+                "food_name": "Bananas, raw"
+            }
+        ]
+
+        # Log out the user
+        self.gui.logout()
+
+        # Verify user information is cleared
+        self.assertIsNone(self.gui.user)
+
+        # Verify temporary food data is cleared
+        self.assertEqual(self.gui.foods, [])
+        self.assertEqual(self.gui.log_entries, [])
+
+        # Verify return to login callback
+        self.gui.on_logout.assert_called_once()
+
 
 if __name__ == "__main__":
     unittest.main()
+

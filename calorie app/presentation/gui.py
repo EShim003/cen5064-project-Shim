@@ -4,10 +4,10 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 
 from service.macro_calculator import MacroCalculator
+from presentation.macro_chart import MacroPieChart
 
 
 class CalorieTrackerGUI:
-    """GUI for searching, calculating, and logging foods."""
 
     def __init__(
         self,
@@ -15,16 +15,19 @@ class CalorieTrackerGUI:
         usda_service,
         food_log_service=None,
         user=None,
-        custom_food_service=None
+        custom_food_service=None,
+        on_logout=None
     ):
         self.root = root
         self.usda_service = usda_service
         self.food_log_service = food_log_service
         self.custom_food_service = custom_food_service
         self.user = user
+        self.on_logout = on_logout
 
         self.foods = []
         self.log_entries = []
+        self.custom_food_windows = []
 
         self.root.title("Calorie & Macro Tracker")
         self.root.geometry("850x800")
@@ -34,9 +37,7 @@ class CalorieTrackerGUI:
         self.refresh_food_log()
 
     def create_widgets(self):
-        """Create the scrollable application interface."""
-
-        # MAIN SCROLLABLE CANVAS
+        # Create the scrollable main interface
         self.canvas = tk.Canvas(
             self.root,
             highlightthickness=0
@@ -81,7 +82,6 @@ class CalorieTrackerGUI:
             )
         )
 
-        # Mouse-wheel scrolling
         self.canvas.bind(
             "<Enter>",
             self.enable_mousewheel
@@ -90,84 +90,100 @@ class CalorieTrackerGUI:
             "<Leave>",
             self.disable_mousewheel
         )
-
         frame.bind(
             "<Enter>",
             self.enable_mousewheel
         )
 
-        # TITLE
+        # Header
         ttk.Label(
             frame,
             text="Calorie & Macro Tracker",
-            font=("Arial", 20, "bold")
+            font=("Arial", 22, "bold")
         ).pack(pady=10)
 
-        if self.user:
+        if self.user is not None:
             ttk.Label(
                 frame,
-                text=f"Welcome, {self.user['username']}!"
+                text=(
+                    f"Welcome, "
+                    f"{self.user.get('username', 'User')}!"
+                ),
+                font=("Arial", 12)
             ).pack(pady=5)
 
-        # USDA FOOD SEARCH
+        # Logout button
+        ttk.Button(
+            frame,
+            text="Logout",
+            command=self.logout
+        ).pack(
+            anchor="e",
+            pady=10
+        )
+
+        ttk.Separator(
+            frame,
+            orient="horizontal"
+        ).pack(fill="x", pady=15)
+
+        # USDA food search
         ttk.Label(
             frame,
-            text="Search for food:"
-        ).pack(anchor="w")
+            text="Search USDA Foods",
+            font=("Arial", 16, "bold")
+        ).pack(pady=10)
 
         self.search_entry = ttk.Entry(frame)
         self.search_entry.pack(fill="x", pady=5)
 
         ttk.Button(
             frame,
-            text="Search USDA",
+            text="Search Food",
             command=self.search_food
-        ).pack(pady=5)
-
-        ttk.Label(
-            frame,
-            text="Select a food:"
-        ).pack(anchor="w", pady=(10, 5))
+        ).pack(fill="x", pady=5)
 
         self.food_listbox = tk.Listbox(
             frame,
             height=6,
             exportselection=False
         )
-        self.food_listbox.pack(fill="x", pady=5)
+        self.food_listbox.pack(
+            fill="x",
+            pady=10
+        )
 
-        # FOOD WEIGHT
         ttk.Label(
             frame,
-            text="Quantity in grams:"
-        ).pack(anchor="w", pady=(10, 5))
+            text="Amount in Grams:"
+        ).pack(anchor="w")
 
         self.grams_entry = ttk.Entry(frame)
-        self.grams_entry.pack(fill="x")
+        self.grams_entry.pack(fill="x", pady=5)
         self.grams_entry.insert(0, "100")
 
         ttk.Button(
             frame,
             text="Calculate Nutrition",
             command=self.calculate_nutrition
-        ).pack(pady=10)
+        ).pack(fill="x", pady=5)
 
-        # NUTRITION RESULTS
         self.result_label = ttk.Label(
             frame,
-            text="Search for a food to begin.",
+            text="Select a food and enter its weight.",
             justify="left"
         )
-        self.result_label.pack(anchor="w", pady=10)
+        self.result_label.pack(
+            anchor="w",
+            pady=10
+        )
 
-        # ADD SEARCHED FOOD
         ttk.Button(
             frame,
             text="Add to Food Log",
             command=self.add_to_food_log
         ).pack(fill="x", pady=5)
 
-        # ADD CUSTOM FOOD
         ttk.Button(
             frame,
             text="Add Custom Food",
@@ -177,13 +193,13 @@ class CalorieTrackerGUI:
         ttk.Separator(
             frame,
             orient="horizontal"
-        ).pack(fill="x", pady=15)
+        ).pack(fill="x", pady=20)
 
-        # DAILY FOOD LOG
+        # Daily food log
         ttk.Label(
             frame,
             text="Today's Food Log",
-            font=("Arial", 16, "bold")
+            font=("Arial", 18, "bold")
         ).pack(pady=10)
 
         self.totals_label = ttk.Label(
@@ -196,14 +212,21 @@ class CalorieTrackerGUI:
             ),
             justify="left"
         )
-        self.totals_label.pack(anchor="w", pady=10)
+        self.totals_label.pack(
+            anchor="w",
+            pady=10
+        )
+
+        # Macronutrient pie chart
+        self.macro_chart = MacroPieChart(frame)
 
         ttk.Label(
             frame,
-            text="Foods Added:"
-        ).pack(anchor="w")
+            text="Foods Added:",
+            font=("Arial", 12, "bold")
+        ).pack(anchor="w", pady=5)
 
-        # FOOD LOG TABLE
+        # Food log table
         table_frame = ttk.Frame(frame)
         table_frame.pack(
             fill="x",
@@ -295,16 +318,33 @@ class CalorieTrackerGUI:
         table_frame.columnconfigure(0, weight=1)
         table_frame.rowconfigure(0, weight=1)
 
-        # REMOVE FOOD BUTTON
         ttk.Button(
             frame,
             text="Remove Selected Food",
             command=self.remove_selected_food
         ).pack(fill="x", pady=10)
 
-    # ==============================
-    # MOUSE-WHEEL SCROLLING
-    # ==============================
+    def logout(self):
+        """Clear the current session and return to login."""
+
+        # Close any custom food windows still open
+        for window in self.custom_food_windows:
+            if window.winfo_exists():
+                window.destroy()
+
+        self.custom_food_windows.clear()
+
+        # Remove mouse wheel binding before changing screens
+        self.disable_mousewheel()
+
+        # Clear the active user and temporary data
+        self.user = None
+        self.foods = []
+        self.log_entries = []
+
+        if self.on_logout is not None:
+            self.on_logout()
+
     def enable_mousewheel(self, event=None):
         self.root.bind_all(
             "<MouseWheel>",
@@ -322,9 +362,6 @@ class CalorieTrackerGUI:
             )
         return "break"
 
-    # ==============================
-    # SEARCH USDA FOODS
-    # ==============================
     def search_food(self):
         food_name = self.search_entry.get().strip()
 
@@ -356,7 +393,10 @@ class CalorieTrackerGUI:
             for food in self.foods:
                 self.food_listbox.insert(
                     tk.END,
-                    food.get("description", "Unknown Food")
+                    food.get(
+                        "description",
+                        "Unknown Food"
+                    )
                 )
 
         except Exception as error:
@@ -365,9 +405,6 @@ class CalorieTrackerGUI:
                 str(error)
             )
 
-    # ==============================
-    # VALIDATE USDA SELECTION
-    # ==============================
     def get_selected_food_and_grams(self):
         selection = self.food_listbox.curselection()
 
@@ -377,9 +414,7 @@ class CalorieTrackerGUI:
             )
 
         try:
-            grams = float(
-                self.grams_entry.get()
-            )
+            grams = float(self.grams_entry.get())
         except ValueError:
             raise ValueError(
                 "Please enter a valid weight."
@@ -390,13 +425,8 @@ class CalorieTrackerGUI:
                 "Weight must be positive and finite."
             )
 
-        selected_food = self.foods[selection[0]]
+        return self.foods[selection[0]], grams
 
-        return selected_food, grams
-
-    # ==============================
-    # CALCULATE NUTRITION
-    # ==============================
     def calculate_nutrition(self):
         try:
             selected_food, grams = (
@@ -444,11 +474,11 @@ class CalorieTrackerGUI:
                 str(error)
             )
 
-    # ==============================
-    # ADD SEARCHED FOOD TO LOG
-    # ==============================
     def add_to_food_log(self):
-        if self.user is None or self.food_log_service is None:
+        if (
+            self.user is None
+            or self.food_log_service is None
+        ):
             messagebox.showwarning(
                 "Login Required",
                 "Please log in before adding food."
@@ -489,11 +519,11 @@ class CalorieTrackerGUI:
                 str(error)
             )
 
-    # ==============================
-    # OPEN CUSTOM FOOD WINDOW
-    # ==============================
     def open_custom_food_window(self):
-        if self.user is None or self.custom_food_service is None:
+        if (
+            self.user is None
+            or self.custom_food_service is None
+        ):
             messagebox.showwarning(
                 "Login Required",
                 "Please log in before adding food."
@@ -505,8 +535,16 @@ class CalorieTrackerGUI:
         window.geometry("450x550")
         window.minsize(400, 500)
 
-        frame = ttk.Frame(window, padding=20)
-        frame.pack(fill="both", expand=True)
+        self.custom_food_windows.append(window)
+
+        frame = ttk.Frame(
+            window,
+            padding=20
+        )
+        frame.pack(
+            fill="both",
+            expand=True
+        )
 
         ttk.Label(
             frame,
@@ -534,10 +572,17 @@ class CalorieTrackerGUI:
             ttk.Label(
                 frame,
                 text=label_text
-            ).pack(anchor="w", pady=(8, 0))
+            ).pack(
+                anchor="w",
+                pady=(8, 0)
+            )
 
             entry = ttk.Entry(frame)
-            entry.pack(fill="x", pady=2)
+            entry.pack(
+                fill="x",
+                pady=2
+            )
+
             entries[key] = entry
 
         entries["grams"].insert(0, "100")
@@ -553,11 +598,11 @@ class CalorieTrackerGUI:
 
         entries["name"].focus_set()
 
-    # ==============================
-    # SAVE CUSTOM FOOD
-    # ==============================
     def save_custom_food(self, entries, window):
-        if self.user is None or self.custom_food_service is None:
+        if (
+            self.user is None
+            or self.custom_food_service is None
+        ):
             messagebox.showwarning(
                 "Login Required",
                 "Please log in before adding food."
@@ -598,7 +643,6 @@ class CalorieTrackerGUI:
             )
 
             self.refresh_food_log()
-
             window.destroy()
 
             messagebox.showinfo(
@@ -618,31 +662,33 @@ class CalorieTrackerGUI:
                 str(error)
             )
 
-    # ==============================
-    # REFRESH FOOD LOG TABLE
-    # ==============================
     def refresh_food_log(self):
-        if self.user is None or self.food_log_service is None:
+        if (
+            self.user is None
+            or self.food_log_service is None
+        ):
             return
 
         try:
             user_id = self.user["id"]
 
-            entries = self.food_log_service.get_daily_log(
-                user_id
+            entries = (
+                self.food_log_service.get_daily_log(
+                    user_id
+                )
             )
 
-            totals = self.food_log_service.get_daily_totals(
-                user_id
+            totals = (
+                self.food_log_service.get_daily_totals(
+                    user_id
+                )
             )
 
             self.log_entries = entries
 
-            # Clear existing rows
             for item in self.log_tree.get_children():
                 self.log_tree.delete(item)
 
-            # Add each food with labeled macros
             for index, entry in enumerate(entries):
                 self.log_tree.insert(
                     "",
@@ -658,16 +704,21 @@ class CalorieTrackerGUI:
                     )
                 )
 
-            # Update daily totals
             self.totals_label.config(
                 text=(
-                    f"Calories: {totals['calories']:.1f} kcal\n"
-                    f"Protein: {totals['protein']:.1f} g\n"
+                    f"Calories: "
+                    f"{totals['calories']:.1f} kcal\n"
+                    f"Protein: "
+                    f"{totals['protein']:.1f} g\n"
                     f"Carbohydrates: "
                     f"{totals['carbohydrates']:.1f} g\n"
-                    f"Fats: {totals['fats']:.1f} g"
+                    f"Fats: "
+                    f"{totals['fats']:.1f} g"
                 )
             )
+
+            # Update pie chart after loading daily totals
+            self.macro_chart.update_chart(totals)
 
         except Exception as error:
             messagebox.showerror(
@@ -675,11 +726,11 @@ class CalorieTrackerGUI:
                 str(error)
             )
 
-    # ==============================
-    # REMOVE SELECTED FOOD
-    # ==============================
     def remove_selected_food(self):
-        if self.user is None or self.food_log_service is None:
+        if (
+            self.user is None
+            or self.food_log_service is None
+        ):
             return
 
         selection = self.log_tree.selection()
@@ -707,3 +758,4 @@ class CalorieTrackerGUI:
                 "Food Log Error",
                 str(error)
             )
+
