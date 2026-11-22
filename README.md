@@ -1,223 +1,324 @@
-# [Calorie & Macronutrient Tracker]
+## How to Run
 
-<!-- CI badge: after Session 4, replace ORG/REPO and the workflow filename, then uncomment:
-![CI](https://github.com/ORG/REPO/actions/workflows/ci.yml/badge.svg)
--->
+### Calorie and Macronutrient Tracker
 
-**Student:** [Ethan Shim] · **Course:** CEN 5064 Software Design, Fall 2026 · **Partner:** [@Archacez]
+The Calorie and Macronutrient Tracker is a Python application that allows users to create accounts, search for foods using USDA FoodData Central, calculate nutritional information based on weight, and maintain a daily food log.
 
-## Project (approval paragraph — write this by Sun Aug 30)
+The application includes a Tkinter graphical user interface, SQLite database storage, and a Matplotlib pie chart displaying daily macronutrient percentages.
 
-Hello, my project is called MacroFood, this is a calorie tracking app that will allow users to seamlessly track calories and 
-will also provide them with caloric guidance relating to their goals. This project is for users who want to be successful in 
-their fitness goals: maintain/lose/gain weight etc. Core features will be personalized calorie recommendations, the ability
-to search their food with the integration of USDA FoodData Central and input portion sizes. The app will automatically edit the 
-macronutrients to the entered portions. Users will also be allowed to enter their own personal foods and creations for custom dishes. 
-This project will be made with python for the backend and the interface and SQL for the food database. 
-
-[One paragraph: What is the system? Who is it for? What are its 3–4 core features?
-This paragraph is your approval request — see the Project Brief, Section 2.]
-
-## How to run
-
-# Calorie and Macronutrient Tracker
-
-## Project Description
-
-The Calorie and Macronutrient Tracker is a Python-based application that allows users to search for foods using the USDA FoodData Central database and calculate nutritional information based on the quantity of food consumed.
-
-Users can search for a food, select an item from a list of USDA search results, enter the food's weight in grams, and view the corresponding calories, protein, carbohydrates, and fats.
-
-## Requirements
+### Requirements
 
 Before running the application, make sure you have:
 
 - Python 3.11 or newer (developed using Python 3.11.9)
-- An internet connection
+- Windows 10/11 or macOS
+- An internet connection for USDA food searches
 - A USDA FoodData Central API key
-- The required Python libraries installed
+- The required Python dependencies
+- Tkinter support
 
-## Installation and Setup
+### Installation and Setup
 
-### Step 1: Download the Project
+#### Step 1: Download the Project
 
-Clone the GitHub repository using:
+Clone the GitHub repository:
 
 ```bash
 git clone <repository-url>
 ```
 
-Navigate into the project directory:
+Navigate to the application directory:
+
+**Windows (PowerShell):**
+
+```powershell
+cd <repository-folder>
+cd "calorie app"
+```
+
+**macOS (Terminal):**
 
 ```bash
 cd <repository-folder>
+cd "calorie app"
 ```
 
-Alternatively, download the repository as a ZIP file, extract it, and open the extracted folder in VS Code.
+Alternatively, download the repository as a ZIP file, extract it, and open the `calorie app` folder in your preferred IDE.
 
-### Step 2: Install Dependencies
+#### Step 2: Install Python
 
-Open a terminal in the project's root directory and run:
+**Windows:**
+
+Download Python from https://www.python.org/downloads/
+
+During installation, ensure Python is available from your terminal.
+
+Verify the installation:
+
+```powershell
+python --version
+```
+
+**macOS:**
+
+Download Python from https://www.python.org/downloads/macos/
+
+Alternatively, install Python using Homebrew:
 
 ```bash
-python -m pip install requests python-dotenv argon2-cffi
+brew install python
 ```
 
-These libraries provide:
+Verify the installation:
 
-- **requests:** Connects the application to the USDA FoodData Central API.
-- **python-dotenv:** Loads environment variables from the `.env` file.
-- **argon2-cffi:** Supports secure password hashing for the authentication functionality.
+```bash
+python3 --version
+```
 
-If the project includes a `requirements.txt` file, you can instead install dependencies using:
+On macOS, use `python3` instead of `python` for the commands below.
+
+#### Step 3: Create a Virtual Environment (Recommended)
+
+A virtual environment keeps the project's dependencies separate from other Python installations.
+
+**Windows (PowerShell):**
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
+
+**macOS (Terminal):**
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+Once activated, the terminal should display `(.venv)` before the command prompt.
+
+#### Step 4: Install Dependencies
+
+With the virtual environment activated, run the following command on either operating system:
 
 ```bash
 python -m pip install -r requirements.txt
 ```
 
-### Step 3: Configure the USDA API Key
+The `requirements.txt` file should include:
 
-The application requires a USDA FoodData Central API key to retrieve nutritional information.
+```text
+requests
+python-dotenv
+argon2-cffi
+matplotlib>=3.8,<4
+```
+
+**Dependency explanations:**
+
+- **requests:** Connects the application to the USDA FoodData Central API.
+- **python-dotenv:** Loads the USDA API key from a `.env` file.
+- **argon2-cffi:** Provides secure password hashing and verification for account registration and login.
+- **matplotlib:** Creates the daily macronutrient pie chart.
+- **sqlite3:** Stores user accounts and daily food logs. Included with Python.
+- **tkinter:** Provides the graphical user interface.
+
+**macOS note:** If Tkinter is missing, verify its installation using:
+
+```bash
+python3 -m tkinter
+```
+
+This should open a small test window.
+
+For Homebrew Python, you may need the matching Tkinter package. For example, if you use Homebrew Python 3.13:
+
+```bash
+brew install python-tk@3.13
+```
+
+Use the package version that matches your installed Homebrew Python version. Python installers from python.org generally include Tkinter.
+
+#### Step 5: Configure the USDA API Key
+
+The application requires a USDA FoodData Central API key to search for foods and retrieve nutritional information.
 
 1. Visit https://fdc.nal.usda.gov/api-key-signup
 2. Request a free API key.
-3. In the project's root directory, create a file named `.env`.
+3. Create a `.env` file inside the `calorie app` directory.
 4. Add the following line:
 
 ```env
 USDA_API_KEY=your_api_key_here
 ```
 
-Replace `your_api_key_here` with your actual API key.
+Replace `your_api_key_here` with your actual USDA API key.
 
-**Important:** Do not upload your `.env` file to GitHub. Add `.env` to your `.gitignore` file.
+**Alternative: Set the API key using the terminal**
 
-### Step 4: Run the Application
+Windows (PowerShell):
 
-Open your terminal in the directory containing `main.py` and run:
+```powershell
+$env:USDA_API_KEY="YOUR_API_KEY_HERE"
+```
+
+macOS (Terminal):
+
+```bash
+export USDA_API_KEY="YOUR_API_KEY_HERE"
+```
+
+These commands set the environment variable for the current terminal session.
+
+**Important:** Do not upload your `.env` file to GitHub. Make sure `.env` is included in `.gitignore`.
+
+#### Step 6: Run the Application
+
+Make sure your terminal is inside the `calorie app` directory containing `main.py`.
+
+**Windows:**
+
+```powershell
+python main.py
+```
+
+**macOS:**
+
+With the virtual environment activated:
 
 ```bash
 python main.py
 ```
 
-The application will start in the terminal.
+Without a virtual environment, using the appropriate Python installation:
 
-## How to Use the Application
-
-### 1. Search for a Food
-
-When prompted, enter the name of a food you want to search for.
-
-Example:
-
-```text
-Enter a food name (or 'quit'): banana
+```bash
+python3 main.py
 ```
 
-### 2. Select a Food
+The Tkinter graphical user interface will open, starting with the login and account registration screen.
 
-The application displays a numbered list of matching foods from the USDA database.
+The application uses SQLite for database storage. The database and required tables should be initialized automatically by the repository classes when the application starts.
 
-Example:
+### How to Use the Application
 
-```text
-Search Results:
---------------------------------
-1. Bananas, raw
-2. Bananas, dehydrated
-3. Bananas, ripe, raw
+**1. Create an Account or Log In**
 
-Select a food number (or 0 to cancel): 1
-```
+When the application opens, users can create a new account or log into an existing account using their credentials. Passwords are securely hashed using Argon2.
 
-Enter the number corresponding to the food you want.
+**2. Search for Foods**
 
-### 3. Enter the Quantity
+After logging in, users can search the USDA FoodData Central database by entering a food name.
 
-After selecting a food, enter the quantity in grams.
+**3. Calculate Nutritional Information**
 
-Example:
+Select a food from the search results and enter its weight in grams. The application calculates the corresponding calories, protein, carbohydrates, and fats.
 
-```text
-Selected: Bananas, raw
-Enter quantity in grams: 150
-```
+**4. Add Foods to the Daily Food Log**
 
-### 4. View Nutritional Information
+Users can add searched foods to their daily food log. The application stores each entry and updates daily calorie and macronutrient totals.
 
-The application calculates the calories and macronutrients based on the selected weight.
+**5. Add Custom Foods**
 
-Example output (illustrative values):
+Users can manually enter their own foods, including calories, protein, carbohydrates, and fats.
 
-```text
-================================
-         NUTRITION FACTS
-================================
-Food: Bananas, raw
-Quantity: 150 g
---------------------------------
-Calories:      133.50 kcal
-Protein:         1.64 g
-Carbohydrates:  34.26 g
-Fats:            0.50 g
-================================
-```
+**6. View Macronutrient Percentages**
 
-Users can continue searching for additional foods or type `quit` to exit the application.
+The application displays a pie chart showing the percentage of calculated macronutrient calories from protein, carbohydrates, and fats.
 
-## Running Unit Tests
+The chart uses the following conversions:
+
+- Protein: 4 calories per gram
+- Carbohydrates: 4 calories per gram
+- Fats: 9 calories per gram
+
+**7. Remove Foods and Log Out**
+
+Users can remove food entries from their daily log and log out to return to the login screen.
+
+### Running Unit Tests
 
 The project uses Python's built-in `unittest` framework.
 
-To run all available unit tests, execute:
+To run all unit tests on Windows or macOS with the virtual environment activated:
 
 ```bash
-python -m unittest discover -s tests -v
+python -m unittest discover -s tests -p "test_*.py" -v
 ```
 
-To run only the macro calculation tests:
+To run only the GUI tests:
+
+```bash
+python -m unittest discover -s tests -p "test_gui.py" -v
+```
+
+To run only the macronutrient pie chart tests:
+
+```bash
+python -m unittest discover -s tests -p "test_macro_chart.py" -v
+```
+
+To run only the macronutrient calculation tests:
 
 ```bash
 python -m unittest discover -s tests -p "test_macro_calculations.py" -v
 ```
 
-Tests verify calorie calculations, protein, carbohydrate and fat calculations, nutrient formatting, and handling of missing nutritional data.
+On macOS without an activated virtual environment, substitute `python3` for `python`.
 
-## Troubleshooting
+### Troubleshooting
+
+**Error: `ModuleNotFoundError: No module named 'argon2'`**
+
+```bash
+python -m pip install argon2-cffi
+```
 
 **Error: `ModuleNotFoundError: No module named 'dotenv'`**
-
-Install the missing dependency:
 
 ```bash
 python -m pip install python-dotenv
 ```
 
+**Error: `ModuleNotFoundError: No module named 'matplotlib'`**
+
+```bash
+python -m pip install matplotlib
+```
+
+**Error: `ModuleNotFoundError: No module named 'tkinter'`**
+
+On Windows, repair or reinstall Python with Tcl/Tk support.
+
+On macOS, use a Python distribution that includes Tkinter or install the matching `python-tk` package for your Homebrew Python version.
+
 **Error: `USDA_API_KEY is not configured`**
 
-Make sure your `.env` file is located in the project's root directory and contains a valid USDA API key.
+Verify that your `.env` file contains a valid USDA API key and that the application loads it using `python-dotenv`.
 
-**Error: `ModuleNotFoundError: No module named 'service'`**
+**Error: `ModuleNotFoundError: No module named 'presentation'`**
 
-Make sure you are running `python main.py` from the project's root directory.
+Make sure you are running `python main.py` from the `calorie app` directory.
 
 **Error: `Ran 0 tests`**
 
-Check that the test files are saved inside the `tests/` directory, that test methods begin with `test_`, and that the test classes inherit from `unittest.TestCase`.
+Verify that your test files are located in the `tests/` directory, that filenames begin with `test_`, and that test classes inherit from `unittest.TestCase`.
 
-## Technologies Used
+### Technologies Used
 
-- Python 3.11.9
+- Python 3.11+
+- Tkinter (graphical user interface)
 - USDA FoodData Central API
-- Requests
-- Python-dotenv
-- SQLite (for food and user data persistence)
-- Argon2 (for password hashing)
-- Unittest (for automated testing)
+- Requests (API communication)
+- Python-dotenv (environment configuration)
+- Argon2 (password hashing)
+- SQLite (database persistence)
+- Matplotlib (macronutrient percentage visualization)
+- Unittest (automated testing)
 
-## Future Improvements
+### Supported Operating Systems
 
-Planned features include saving selected foods to a daily food log, tracking daily calorie and macronutrient totals, and integrating user accounts with stored food history.
+The application is designed to run on Windows and macOS using Python. Both operating systems use the same application code, with differences primarily in Python installation, virtual environment activation, and terminal commands.
 
 ## Architecture
 
