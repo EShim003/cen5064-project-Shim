@@ -1,5 +1,4 @@
 
-import tkinter as tk
 from tkinter import ttk
 
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -7,8 +6,6 @@ from matplotlib.figure import Figure
 
 
 class MacroPieChart:
-    """Displays daily macronutrients as a pie chart."""
-
     def __init__(self, parent):
         self.frame = ttk.Frame(parent)
         self.frame.pack(fill="x", pady=15)
@@ -19,11 +16,7 @@ class MacroPieChart:
             font=("Arial", 16, "bold")
         ).pack(pady=10)
 
-        self.figure = Figure(
-            figsize=(5, 4),
-            dpi=100
-        )
-
+        self.figure = Figure(figsize=(5, 4), dpi=100)
         self.axis = self.figure.add_subplot(111)
 
         self.canvas = FigureCanvasTkAgg(
@@ -43,15 +36,31 @@ class MacroPieChart:
         })
 
     def update_chart(self, totals):
-        """Update chart using daily macronutrient totals."""
-
         self.axis.clear()
 
-        protein = max(0, float(totals.get("protein") or 0))
-        carbs = max(0, float(totals.get("carbohydrates") or 0))
-        fats = max(0, float(totals.get("fats") or 0))
+        # Get daily macro totals in grams
+        protein = max(
+            0, float(totals.get("protein") or 0)
+        )
 
-        values = [protein, carbs, fats]
+        carbs = max(
+            0, float(totals.get("carbohydrates") or 0)
+        )
+
+        fats = max(
+            0, float(totals.get("fats") or 0)
+        )
+
+        # Convert grams into calories
+        protein_calories = protein * 4
+        carb_calories = carbs * 4
+        fat_calories = fats * 9
+
+        values = [
+            protein_calories,
+            carb_calories,
+            fat_calories
+        ]
 
         labels = [
             "Protein",
@@ -61,7 +70,7 @@ class MacroPieChart:
 
         colors = [
             "#2563EB",  # Blue - Protein
-            "#FACC15",  # Yellow - Carbs
+            "#FACC15",  # Yellow - Carbohydrates
             "#16A34A"   # Green - Fats
         ]
 
@@ -74,6 +83,7 @@ class MacroPieChart:
                 va="center",
                 transform=self.axis.transAxes
             )
+
             self.axis.set_axis_off()
 
         else:
@@ -93,3 +103,4 @@ class MacroPieChart:
 
         self.figure.tight_layout()
         self.canvas.draw_idle()
+

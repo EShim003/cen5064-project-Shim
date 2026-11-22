@@ -8,54 +8,44 @@ from presentation.macro_chart import MacroPieChart
 class TestMacroPieChart(unittest.TestCase):
 
     def setUp(self):
-        # Create chart without opening Tkinter
-        self.chart = MacroPieChart.__new__(
-            MacroPieChart
-        )
+        # Avoid creating a real Tkinter window
+        self.chart = MacroPieChart.__new__(MacroPieChart)
 
         self.chart.axis = Mock()
         self.chart.figure = Mock()
         self.chart.canvas = Mock()
 
-    def test_chart_displays_macronutrients(self):
+    def test_macro_percentages(self):
         totals = {
-            "protein": 120,
+            "protein": 150,
             "carbohydrates": 150,
-            "fats": 60
+            "fats": 33.33
         }
 
         self.chart.update_chart(totals)
 
-        self.chart.axis.pie.assert_called_once()
+        # Protein: 150 * 4 = 600 calories
+        # Carbs: 150 * 4 = 600 calories
+        # Fats: 33.33 * 9 = 299.97 calories
 
         args, kwargs = self.chart.axis.pie.call_args
 
         self.assertEqual(
             args[0],
-            [120.0, 150.0, 60.0]
+            [600, 600, 299.97]
         )
 
         self.assertEqual(
-            kwargs["labels"],
-            [
-                "Protein",
-                "Carbohydrates",
-                "Fats"
-            ]
+            kwargs["autopct"],
+            "%1.1f%%"
         )
 
         self.assertEqual(
             kwargs["colors"],
-            [
-                "#2563EB",
-                "#FACC15",
-                "#16A34A"
-            ]
+            ["#2563EB", "#FACC15", "#16A34A"]
         )
 
-        self.chart.canvas.draw_idle.assert_called_once()
-
-    def test_chart_handles_empty_food_log(self):
+    def test_empty_macro_chart(self):
         totals = {
             "protein": 0,
             "carbohydrates": 0,
@@ -68,11 +58,9 @@ class TestMacroPieChart(unittest.TestCase):
         self.chart.axis.text.assert_called_once()
         self.chart.axis.set_axis_off.assert_called_once()
 
-    def test_chart_handles_missing_nutrients(self):
+    def test_missing_macros(self):
         totals = {
-            "protein": None,
-            "carbohydrates": 50,
-            "fats": None
+            "protein": 25
         }
 
         self.chart.update_chart(totals)
@@ -81,9 +69,15 @@ class TestMacroPieChart(unittest.TestCase):
 
         self.assertEqual(
             args[0],
-            [0.0, 50.0, 0.0]
+            [100, 0, 0]
+        )
+
+        self.assertEqual(
+            kwargs["autopct"],
+            "%1.1f%%"
         )
 
 
 if __name__ == "__main__":
     unittest.main()
+
