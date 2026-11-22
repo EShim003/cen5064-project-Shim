@@ -16,59 +16,56 @@ from repository.food_log_repository import FoodLogRepository
 
 
 def main():
-    """Initialize application dependencies and launch login."""
-
     root = tk.Tk()
 
-    # Shared database for users and food logs
     db_path = "calorie_tracker.db"
 
-    # Authentication dependencies
+    # Initialize repositories
     user_repository = UserRepository(db_path)
+    food_log_repository = FoodLogRepository(db_path)
+
+    # Initialize services
     auth_service = AuthService(user_repository)
     auth_controller = AuthController(auth_service)
 
-    # USDA food search
     usda_service = USDAFoodService()
+    food_log_service = FoodLogService(food_log_repository)
+    custom_food_service = CustomFoodService(food_log_repository)
 
-    # Food log persistence
-    food_log_repository = FoodLogRepository(db_path)
-
-    # Existing food log service
-    food_log_service = FoodLogService(
-        food_log_repository
-    )
-
-    # New custom food service
-    custom_food_service = CustomFoodService(
-        food_log_repository
-    )
-
-    def open_food_search(user):
-        """Open food tracker after successful login."""
-
-        # Remove login screen widgets
+    def clear_window():
+        # Remove all widgets from the current screen
         for widget in root.winfo_children():
             widget.destroy()
 
-        # Initialize food tracker with all dependencies
+    def show_login():
+        # Return to the login screen
+        clear_window()
+
+        LoginGUI(
+            root,
+            auth_controller,
+            open_food_search
+        )
+
+    def open_food_search(user):
+        # Open the calorie tracker after login
+        clear_window()
+
         CalorieTrackerGUI(
             root=root,
             usda_service=usda_service,
             food_log_service=food_log_service,
             user=user,
-            custom_food_service=custom_food_service
+            custom_food_service=custom_food_service,
+            on_logout=show_login
         )
 
-    # Start at login screen
-    LoginGUI(
-        root,
-        auth_controller,
-        open_food_search
-    )
+    # Start application at login screen
+    show_login()
 
     root.mainloop()
 
 
 if __name__ == "__main__":
     main()
+
