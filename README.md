@@ -320,6 +320,15 @@ Verify that your test files are located in the `tests/` directory, that filename
 
 The application is designed to run on Windows and macOS using Python. Both operating systems use the same application code, with differences primarily in Python installation, virtual environment activation, and terminal commands.
 
+### Midterm Feedback Addressed: 
+
+- Created a Domain Layer: Moved business rules and validation logic from service/food_service.py into domain/food.py, ensuring nutritional values cannot be negative and that foods must have at least one serving.
+- Added Domain Unit Tests: Implemented tests to verify that invalid nutritional values and foods without a valid serving are rejected, improving reliability and enforcing business rules.
+- Cleaned the GitHub Repository: Updated .gitignore to exclude __pycache__/ directories and removed tracked .pyc files using git rm -r --cached, keeping unnecessary generated files out of the repository.
+- Renamed the ADR File: Renamed 0001-your-decision.md to a descriptive filename matching its architectural decision, improving documentation organization and clarity.
+- Added a GUI application instead of using a terminal GUI.
+
+
 ## Architecture
 
 ### Tier breakdown (Session 2 studio)
