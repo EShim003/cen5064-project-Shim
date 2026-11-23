@@ -457,6 +457,8 @@ Decisions live in [`docs/adr/`](docs/adr/). Start with ADR-001 in Session 4.
 | [003](docs/adr/0003-Add-Foods_To_Log.md) | Users can now add seached foods to their food logs | COMPLETED |
 | [004](docs/adr/0004-Add-Custom-Food.md) | Users can now add their own custom food to their food logs | COMPLETED |
 | [005](docs/adr/0005-Add-Login-Gui.md) | Added Login and account creation page in the GUI | COMPLETED |
+| [006](docs/adr/0006-Add-UI-Visuals.md) | Added Pie Chart to see macronutrient breakdown | COMPLETED |
+
 
 
 
